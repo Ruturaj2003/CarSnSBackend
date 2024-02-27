@@ -193,15 +193,15 @@ app.delete('/deleteCustomer/:id', (req, res) => {
 });
 
 // Adding new employee
-app.post('/addEmployee', (req, res) => {
-  const { emp_name, dept, salary } = req.body;
+app.post('/employee', (req, res) => {
+  const { name, department, salary } = req.body;
 
-  if (!emp_name || !dept || !salary) {
+  if (!name || !department || !salary) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
-  const sql = 'INSERT INTO employee (emp_name, dept, salary) VALUES (?, ?, ?)';
-  const values = [emp_name, dept, salary];
+  const sql = 'INSERT INTO employee (name, department, salary) VALUES (?, ?, ?)';
+  const values = [name, department, salary];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -215,10 +215,10 @@ app.post('/addEmployee', (req, res) => {
 });
 
 // Deleting employee
-app.delete('/deleteEmployee/:id', (req, res) => {
+app.delete('/employee/:id', (req, res) => {
   const id = req.params.id;
 
-  const sql = 'DELETE FROM employee WHERE emp_id = ?';
+  const sql = 'DELETE FROM employee WHERE id = ?';
 
   db.query(sql, [id], (err, data) => {
     if (err) {
@@ -231,7 +231,7 @@ app.delete('/deleteEmployee/:id', (req, res) => {
 });
 
 //Edit employee
-app.put('/updateEmployee/:id', (req, res) => {
+app.put('/employee/:id', (req, res) => {
   const empDetails = req.params.id;
   const updateDetails = req.body;
 
@@ -245,7 +245,7 @@ app.put('/updateEmployee/:id', (req, res) => {
 
   const sql = `UPDATE employee SET ${updateFields
     .map((field) => `${field} = ?`)
-    .join(', ')} WHERE emp_id = ?`;
+    .join(', ')} WHERE id = ?`;
 
   const values = updateFields.map((field) => updateDetails[field]);
   values.push(empDetails);

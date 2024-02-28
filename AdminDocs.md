@@ -1,166 +1,294 @@
-### 1. Get Car Stock
+# API Documentation
 
-- **Endpoint:** `/carStock`
-- **Description:** Retrieves information about available car stock, including the model name, car image, and current stock.
-- **Method:** GET
+## Customer
+
+### Get All Customers
+
+Retrieve information about all customers.
+
+- **URL:** `/customer`
+- **Method:** `GET`
 - **Response:**
-  - 200 OK: Returns an array of car details if available.
-  - 404 Not Found: If no products are found.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns an array of customer objects.
+  - `404 Not Found`: No customers found.
+  - `500 Internal Server Error`: Server error.
 
-### 2. Get Customer Data
+### Delete Customer
 
-- **Endpoint:** `/customer`
-- **Description:** Fetches information about all customers.
-- **Method:** GET
+Delete a customer by ID.
+
+- **URL:** `/customer/:id`
+- **Method:** `DELETE`
+- **Parameters:**
+  - `id`: Customer ID.
 - **Response:**
-  - 200 OK: Returns an array of customer details if available.
-  - 404 Not Found: If no customer records are found.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Customer deleted successfully.
+  - `404 Not Found`: Customer not found.
+  - `500 Internal Server Error`: Server error.
 
-### 3. Get Employee Data
+## Employee
 
-- **Endpoint:** `/employee`
-- **Description:** Retrieves details of all employees.
-- **Method:** GET
+### Get All Employees
+
+Retrieve information about all employees.
+
+- **URL:** `/employee`
+- **Method:** `GET`
 - **Response:**
-  - 200 OK: Returns an array of employee details if available.
-  - 404 Not Found: If no employee records are found.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns an array of employee objects.
+  - `404 Not Found`: No employees found.
+  - `500 Internal Server Error`: Server error.
 
-### 4. Get Turnover
+### Add New Employee
 
-- **Endpoint:** `/turnOver`
-- **Description:** Calculates the total turnover based on delivered car prices from bookings.
-- **Method:** GET
+Add a new employee.
+
+- **URL:** `/employee`
+- **Method:** `POST`
+- **Body Parameters:**
+  - `name`: Employee name.
+  - `department`: Employee department.
+  - `salary`: Employee salary.
 - **Response:**
-  - 200 OK: Returns the total turnover if available.
-  - 404 Not Found: If no cart products are found in the delivered status.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `201 Created`: Employee added successfully.
+  - `400 Bad Request`: Incomplete data.
+  - `500 Internal Server Error`: Server error.
 
-### 5. Get Pending Bookings
+### Delete Employee
 
-- **Endpoint:** `/pendingBookings`
-- **Description:** Counts the number of pending bookings.
-- **Method:** GET
+Delete an employee by ID.
+
+- **URL:** `/employee/:id`
+- **Method:** `DELETE`
+- **Parameters:**
+  - `id`: Employee ID.
 - **Response:**
-  - 200 OK: Returns the count of pending bookings if available.
-  - 404 Not Found: If no pending bookings are found.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Employee deleted successfully.
+  - `404 Not Found`: Employee not found.
+  - `500 Internal Server Error`: Server error.
 
-### 6. Get Total Number of Employees
+### Edit Employee
 
-- **Endpoint:** `/totalEmployee`
-- **Description:** Counts the total number of employees.
-- **Method:** GET
+Edit an employee's details.
+
+- **URL:** `/employee/:id`
+- **Method:** `PUT`
+- **Parameters:**
+  - `id`: Employee ID.
+- **Body Parameters:**
+  - `name`: New employee name (optional).
+  - `department`: New employee department (optional).
+  - `salary`: New employee salary (optional).
 - **Response:**
-  - 200 OK: Returns the total count of employees if available.
-  - 404 Not Found: If no employee records are found.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Employee details updated successfully.
+  - `400 Bad Request`: No valid fields to update.
+  - `500 Internal Server Error`: Server error.
 
-### 7. Update Booking Status
+## Turnover
 
-- **Endpoint:** `/updateBookingStatus/:booking_id`
-- **Description:** Updates the status of a booking to 'delivered'.
-- **Method:** PUT
+### Get Total Turnover
+
+Calculate the total turnover based on delivered bookings.
+
+- **URL:** `/turnOver`
+- **Method:** `GET`
 - **Response:**
-  - 200 OK: If the booking status is updated successfully.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns the total turnover.
+  - `404 Not Found`: No turnover found.
+  - `500 Internal Server Error`: Server error.
 
-### 8. Delete Customer
+## Pending Bookings
 
-- **Endpoint:** `/deleteCustomer/:id`
-- **Description:** Deletes a customer based on the provided customer ID.
-- **Method:** DELETE
+### Get Count of Pending Bookings
+
+Retrieve the count of pending bookings.
+
+- **URL:** `/pendingBookings`
+- **Method:** `GET`
 - **Response:**
-  - 200 OK: If the customer is deleted successfully.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns the count of pending bookings.
+  - `404 Not Found`: No pending bookings found.
+  - `500 Internal Server Error`: Server error.
 
-### 9. Add Employee
+## Total Number of Employees
 
-- **Endpoint:** `/addEmployee`
-- **Description:** Adds a new employee to the system.
-- **Method:** POST
-- **Request Body:**
-  - `emp_name`: Employee's name.
-  - `dept`: Employee's department.
-  - `salary`: Employee's salary.
+### Get Total Number of Employees
+
+Retrieve the total number of employees.
+
+- **URL:** `/totalEmployee`
+- **Method:** `GET`
 - **Response:**
-  - 201 Created: If the employee is added successfully.
-  - 400 Bad Request: If the request body is incomplete.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns the total number of employees.
+  - `404 Not Found`: No employees found.
+  - `500 Internal Server Error`: Server error.
 
-### 10. Delete Employee
+## Booking
 
-- **Endpoint:** `/deleteEmployee/:id`
-- **Description:** Deletes an employee based on the provided employee ID.
-- **Method:** DELETE
+### Update Booking Status
+
+Update the status of a booking to "delivered".
+
+- **URL:** `/booking/:id`
+- **Method:** `PUT`
+- **Parameters:**
+  - `id`: Booking ID.
 - **Response:**
-  - 200 OK: If the employee is deleted successfully.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Booking status updated successfully.
+  - `500 Internal Server Error`: Server error.
 
-### 11. Edit Employee
+## Service
 
-- **Endpoint:** `/updateEmployee/:id`
-- **Description:** Edits the details of an employee based on the provided employee ID.
-- **Method:** PUT
+### Get All Services
+
+Retrieve information about all services.
+
+- **URL:** `/service`
+- **Method:** `GET`
 - **Response:**
-  - 200 OK: If the employee details are updated successfully.
-  - 400 Bad Request: If no valid fields are provided for update.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns an array of service objects.
+  - `404 Not Found`: No services found.
+  - `500 Internal Server Error`: Server error.
 
-### 12. Displaying Services
+### Book a Service
 
-- **Endpoint:** `/displayService`
-- **Description:** Retrieves information about available services.
-- **Method:** GET
+Book a new service.
+
+- **URL:** `/service`
+- **Method:** `POST`
+- **Body Parameters:**
+  - `regNo`: Registration number.
+  - `name`: Customer name.
+  - `phone`: Customer phone.
+  - `serviceType`: Type of service.
+  - `currentDate`: Arrival date.
 - **Response:**
-  - 200 OK: Returns an array of service details if available.
-  - 404 Not Found: If no services are found.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Service booked successfully.
+  - `400 Bad Request`: All fields are required.
+  - `500 Internal Server Error`: Server error.
 
-### 13. Adding New Car
+## Car
 
-- **Endpoint:** `/addCar`
-- **Description:** Adds a new car to the system with images and other details.
-- **Method:** POST
-- **Request Body:**
-  - `chassis_no`: Chassis number of the car.
-  - `Engine_no`: Engine number of the car.
-  - `Car_type`: Type of the car.
-  - `Model_name`: Name of the car model.
-  - `Car_descrip`: Description of the car.
-  - `color`: Color of the car.
-  - `price`: Price of the car.
-  - `stock`: Stock availability.
-- **Request Files:**
-  - `Car_image`: Car image file.
-  - `sideView`: Side view image file.
-  - `interior`: Interior image file.
-  - `rearView`: Rear view image file.
+### Get All Cars
+
+Retrieve information about all cars.
+
+- **URL:** `/car`
+- **Method:** `GET`
 - **Response:**
-  - 200 OK: If the car is added successfully.
-  - 400 Bad Request: If any required fields or image files are missing.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `200 OK`: Returns an array of car objects.
+  - `404 Not Found`: No cars found.
+  - `500 Internal Server Error`: Server error.
 
-### 14. Edit Car Details
+### Add New Car
 
-- **Endpoint:** `/updateCar/:id`
-- **Description:** Edits the details of a car based on the provided car ID.
-- **Method:** PUT
-- **Request Parameters:**
-  - `id` (Path Parameter): ID of the car to be updated.
-- **Request Body:** (Fields to be updated)
-  - `chassis_no`: Updated chassis number.
-  - `Engine_no`: Updated engine number.
-  - `Car_type`: Updated car type.
-  - ... (Include other fields as needed)
+Add a new car.
+
+- **URL:** `/car`
+- **Method:** `POST`
+- **Body Parameters:**
+  - `chassisno`: Chassis number.
+  - `engineno`: Engine number.
+  - `cartype`: Car type.
+  - `modelname`: Model name.
+  - `carimage`: Car image.
+  - `sideview`: Side view image.
+  - `interior`: Interior image.
+  - `rearview`: Rear view image.
+  - `cardescription`: Car description.
+  - `color`: Car color.
+  - `price`: Car price.
+  - `stock`: Car stock.
 - **Response:**
-  - 200 OK: If the car details are updated successfully.
-  - 400 Bad Request: If no valid fields are provided for update.
-  - 500 Internal Server Error: In case of a database or server-related issue.
+  - `201 Created`: Car added successfully.
+  - `400 Bad Request`: Missing required field(s) or image files.
+  - `500 Internal Server Error`: Server error.
 
-### 15. Delete Car
+### Edit Car Details
 
-- **Endpoint:** `/deleteCar/:id`
-- **Description:** Deletes a car based on
+Edit details of a car.
+
+- **URL:** `/car/:id`
+- **Method:** `PUT`
+- **Parameters:**
+  - `id`: Car ID.
+- **Body Parameters:**
+  - `chassisno`: New chassis number (optional).
+  - `engineno`: New engine number (optional).
+  - `cartype`: New car type (optional).
+  - `modelname`: New model name (optional).
+  - `carimage`: New car image (optional).
+  - `sideview`: New side view image (optional).
+  - `interior`: New interior image (optional).
+  - `rearview`: New rear view image (optional).
+  - `cardescription`: New car description (optional).
+  - `color`: New car color (optional).
+  - `price`: New car price (optional).
+  - `stock`: New car stock (optional).
+- **Response:**
+  - `200 OK`: Car details updated successfully.
+  - `400 Bad Request`: No valid fields to update.
+  - `500 Internal Server Error`: Server error.
+
+### Delete Car
+
+Delete a car by ID.
+
+- **URL:** `/car/:id`
+- **Method:** `DELETE`
+- **Parameters:**
+  - `id`: Car ID.
+- **Response:**
+  - `200 OK`: Car deleted successfully.
+  - `404 Not Found`: Car not found.
+  - `500 Internal Server Error`: Server
+
+error.
+
+## User
+
+### User Signup
+
+Create a new user account.
+
+- **URL:** `/usersignup`
+- **Method:** `POST`
+- **Body Parameters:**
+  - `name`: User name.
+  - `phone`: User phone.
+  - `address`: User address.
+  - `licenceNumber`: User license number.
+  - `password`: User password.
+- **Response:**
+  - `200 OK`: User account created successfully.
+  - `400 Bad Request`: All fields are required.
+  - `500 Internal Server Error`: Server error.
+
+### User Login
+
+Authenticate a user.
+
+- **URL:** `/userlogin`
+- **Method:** `POST`
+- **Body Parameters:**
+  - `phone`: User phone.
+  - `password`: User password.
+- **Response:**
+  - `200 OK`: Login successful.
+  - `401 Unauthorized`: Invalid credentials.
+  - `500 Internal Server Error`: Server error.
+
+---
+
+## Common
+
+### Get All Cars
+
+Retrieve information about all cars.
+
+- **URL:** `/car`
+- **Method:** `GET`
+- **Response:**
+  - `200 OK`: Returns an array of car objects.
+  - `404 Not Found`: No cars found.
+  - `500 Internal Server Error`: Server error.

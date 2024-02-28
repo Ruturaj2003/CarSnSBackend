@@ -28,7 +28,7 @@ const upload = multer({
 });
 
 const db = mysql.createConnection({
-  connectionLimit: 10,
+  connectionLimit: 20,
   host: 'localhost',
   user: 'root',
   password: '',
@@ -39,22 +39,25 @@ app.get('/', (req, res) => {
   return res.send('Database Live');
 });
 
+
 //Admin
 
-//car stock
-app.get('/carStock', (req, res) => {
-  const sql = 'SELECT Model_name, Car_image, stock FROM car';
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+//Admin login
+app.post('/admin', (req, res) => {
+  const { email, password } = req.body;
 
-    if (result.length === 0) {
-      return res.status(404).json({ error: 'No products found' });
-    }
+  const sql = 'SELECT * FROM admin WHERE username = ? AND password = ?';
+  const values = [email, password];
 
-    return res.send(result);
+  db.query(sql, values, (err, result) => {
+      if (err) {
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      if (result.length === 0) {
+          return res.status(401).json({ error: 'Invalid credentials' });
+      }
+      return res.status(200).json({ message: 'Login successful' });
   });
 });
 
@@ -97,7 +100,7 @@ app.get('/turnOver', (req, res) => {
   const sql = `
     SELECT SUM(car.price) AS total
     FROM car
-    JOIN booking ON car.car_id = booking.carId
+    JOIN booking ON car.id = booking.carid
     WHERE booking.status = 'delivered'
     `;
 
@@ -159,11 +162,11 @@ app.get('/totalEmployee', (req, res) => {
 });
 
 //Click delivered
-app.put('/updateBookingStatus/:booking_id', (req, res) => {
-  const { booking_id } = req.params;
+app.put('/booking/:id', (req, res) => {
+  const { id } = req.params;
 
-  const sql = 'UPDATE booking SET status = ? WHERE booking_id = ?';
-  const values = ['delivered', booking_id];
+  const sql = 'UPDATE booking SET status = ? WHERE id = ?';
+  const values = ['delivered', id];
 
   db.query(sql, values, (error, result) => {
     if (error) {
@@ -177,17 +180,17 @@ app.put('/updateBookingStatus/:booking_id', (req, res) => {
 });
 
 // Deleting customer
-app.delete('/deleteCustomer/:id', (req, res) => {
+app.delete('/customer/:id', (req, res) => {
   const id = req.params.id;
 
-  const sql = 'DELETE FROM customer WHERE C_id = ?';
+  const sql = 'DELETE FROM customer WHERE id = ?';
 
   db.query(sql, [id], (err, data) => {
     if (err) {
       console.log('Error in deleting customer', err);
       return res.json(err);
     }
-
+    res.json({ message: 'Customer deleted successfully' });
     console.log('Customer deleted successfully');
   });
 });
@@ -225,7 +228,7 @@ app.delete('/employee/:id', (req, res) => {
       console.log('Error in deleting employee', err);
       return res.json(err);
     }
-
+    res.json({ message: 'Employee deleted successfully' });
     console.log('Employee deleted successfully');
   });
 });
@@ -264,7 +267,7 @@ app.put('/employee/:id', (req, res) => {
 });
 
 //Displaying service
-app.get('/displaySercice', (req, res) => {
+app.get('/service', (req, res) => {
   const sql = 'SELECT * FROM services';
   db.query(sql, (err, result) => {
     if (err) {
@@ -282,20 +285,20 @@ app.get('/displaySercice', (req, res) => {
 
 //Adding New Car
 app.post(
-  '/addCar',
+  '/car',
   upload.fields([
-    { name: 'Car_image', maxCount: 1 },
-    { name: 'sideView', maxCount: 1 },
+    { name: 'carimage', maxCount: 1 },
+    { name: 'sideview', maxCount: 1 },
     { name: 'interior', maxCount: 1 },
-    { name: 'rearView', maxCount: 1 },
+    { name: 'rearview', maxCount: 1 },
   ]),
   (req, res) => {
     const requiredFields = [
-      'chassis_no',
-      'Engine_no',
-      'Car_type',
-      'Model_name',
-      'Car_descrip',
+      'chassisno',
+      'engineno',
+      'cartype',
+      'modelname',
+      'cardescription',
       'color',
       'price',
       'stock',
@@ -309,24 +312,24 @@ app.post(
       }
     }
 
-    const { Car_image, sideView, interior, rearView } = req.files;
+    const { carimage, sideview, interior, rearview } = req.files;
 
-    if (!Car_image || !sideView || !interior || !rearView) {
+    if (!carimage || !sideview || !interior || !rearview) {
       return res.status(400).json({ error: 'Missing one or more image files' });
     }
 
     const sql =
-      'INSERT INTO car (`chassis_no`, `Engine_no`, `Car_type`, `Model_name`,`Car_image`, `sideView`, `interior`, `rearView`, `Car_descrip`,`color`, `price`, `stock`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO car (`chassisno`, `engineno`, `cartype`, `modelname`,`carimage`, `sideview`, `interior`, `rearview`, `cardescription`,`color`, `price`, `stock`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const values = [
-      req.body.chassis_no,
-      req.body.Engine_no,
-      req.body.Car_type,
-      req.body.Model_name,
-      Car_image[0].filename,
-      sideView[0].filename,
+      req.body.chassisno,
+      req.body.engineno,
+      req.body.cartype,
+      req.body.modelname,
+      carimage[0].filename,
+      sideview[0].filename,
       interior[0].filename,
-      rearView[0].filename,
-      req.body.Car_descrip,
+      rearview[0].filename,
+      req.body.cardescription,
       req.body.color,
       req.body.price,
       req.body.stock,
@@ -343,7 +346,7 @@ app.post(
 );
 
 //Edit Car Details
-app.put('/updateCar/:id', (req, res) => {
+app.put('/car/:id', (req, res) => {
   const empDetails = req.params.id;
   const updateDetails = req.body;
 
@@ -357,7 +360,7 @@ app.put('/updateCar/:id', (req, res) => {
 
   const sql = `UPDATE car SET ${updateFields
     .map((field) => `${field} = ?`)
-    .join(', ')} WHERE Car_id = ?`;
+    .join(', ')} WHERE id = ?`;
 
   const values = updateFields.map((field) => updateDetails[field]);
   values.push(empDetails);
@@ -376,77 +379,89 @@ app.put('/updateCar/:id', (req, res) => {
 });
 
 // Deleting Car
-app.delete('/deleteCar/:id', (req, res) => {
+app.delete('/car/:id', (req, res) => {
   const id = req.params.id;
 
-  const sql = 'DELETE FROM car WHERE Car_id = ?';
+  const sql = 'DELETE FROM car WHERE id = ?';
 
   db.query(sql, [id], (err, data) => {
     if (err) {
       console.log('Error in deleting car', err);
       return res.json(err);
     }
-
+    res.json({ message: 'car deleted successfully' });
     console.log('car deleted successfully');
   });
 });
 
 //user
 
-//To browse all cars
-app.get('/browseCars', (req, res) => {
-  const sql = 'SELECT * FROM car';
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+//user signup
+app.post('/usersignup', (req, res) => {
+  const { name, phone, adress, licenceNumber, password } = req.body;
 
-    if (result.length === 0) {
-      return res.status(404).json({ error: 'No products found' });
-    }
+  if (!name || !phone || !adress || !licenceNumber || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+  }
 
-    return res.send(result);
+  const sql = "INSERT INTO customer (`name`, `phone`, `address`, `licencenumber`, `password`) VALUES (?, ?, ?, ?, ?)";
+  const values = [name, phone, adress, licenceNumber, password];
+
+  db.query(sql, values, (err, data) => {
+      if (err) {
+          return res.status(500).json({ error: "Error inserting data into the database" });
+      }
+      return res.json({ success: true, data });
+  });
+});
+
+
+//user login
+app.post('/userlogin', (req, res) => {
+  const { phone, password } = req.body;
+
+  const sql = 'SELECT * FROM customer WHERE phone = ? AND password = ?';
+  const values = [phone, password];
+
+  db.query(sql, values, (err, result) => {
+      if (err) {
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      if (result.length === 0) {
+          return res.status(401).json({ error: 'Invalid credentials' });
+      }
+      return res.status(200).json({ message: 'Login successful' });
   });
 });
 
 //Book a service
-app.post('/booking', (req, res) => {
+app.post('/service', (req, res) => {
   const {
-    Reg_no,
-    Cust_name,
+    regNo,
+    name,
     phone,
-    Service_type,
-    Arrival_date,
-    Delivery_date,
-    ser_desc,
-    Cost,
+    serviceType,
+    currentDate
   } = req.body;
 
   if (
-    !Reg_no ||
-    !Cust_name ||
+    !regNo ||
+    !name ||
     !phone ||
-    !Service_type ||
-    !Arrival_date ||
-    !Delivery_date ||
-    !ser_desc ||
-    !Cost
+    !serviceType
   ) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const sql =
-    'INSERT INTO services (`Reg_no`, `Cust_name`, `phone`, `Service_type`, `Arrival_date`, `Delivery_date`, `ser_desc`, `Cost`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    'INSERT INTO services (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`) VALUES (?, ?, ?, ?, ?)';
   const values = [
-    Reg_no,
-    Cust_name,
+    regNo,
+    name,
     phone,
-    Service_type,
-    Arrival_date,
-    Delivery_date,
-    ser_desc,
-    Cost,
+    serviceType,
+    currentDate
   ];
 
   db.query(sql, values, (err, data) => {
@@ -460,6 +475,28 @@ app.post('/booking', (req, res) => {
   });
 });
 
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+});
+
+
+
+//common
+
+//cars details
+app.get('/car', (req, res) => {
+  const sql = 'SELECT * FROM car';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'No products found' });
+    }
+
+    return res.send(result);
+  });
 });

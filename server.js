@@ -1,24 +1,24 @@
-const express = require('express');
-const mysql = require('mysql');
-const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
+const express = require("express");
+const mysql = require("mysql");
+const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
 
 const app = express();
 const port = 8081;
 app.use(cors());
 app.use(express.json());
 
-app.use('/images', express.static(path.join(__dirname, '../images')));
+app.use("/images", express.static(path.join(__dirname, "../images")));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, '../images');
+    cb(null, "../images");
   },
   filename: (req, file, cb) => {
     cb(
       null,
-      file.fieldname + '_' + Date.now() + path.extname(file.originalname)
+      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
     );
   },
 });
@@ -29,46 +29,46 @@ const upload = multer({
 
 const db = mysql.createConnection({
   connectionLimit: 20,
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'cardb',
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "cardb",
 });
 
 // Admin
 
 // Admin login
-app.post('/admin', (req, res) => {
+app.post("/admin", (req, res) => {
   const { email, password } = req.body;
 
-  const sql = 'SELECT * FROM admin WHERE username = ? AND password = ?';
+  const sql = "SELECT * FROM admin WHERE username = ? AND password = ?";
   const values = [email, password];
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
-    return res.status(200).json({ message: 'Login successful' });
+    return res.status(200).json({ message: "Login successful" });
   });
 });
 
 // Customer
 
 // Customer data
-app.get('/customer', (req, res) => {
-  const sql = 'SELECT * FROM customer';
+app.get("/customer", (req, res) => {
+  const sql = "SELECT * FROM customer";
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No products found' });
+      return res.status(404).json({ error: "No products found" });
     }
 
     return res.send(result);
@@ -76,26 +76,26 @@ app.get('/customer', (req, res) => {
 });
 
 // Create Customer
-app.post('/customer', (req, res) => {
+app.post("/customer", (req, res) => {
   const { name, phone, address, licenceNumber, password } = req.body;
 
   if (!name || !phone || !address || !licenceNumber || !password) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   const sql =
-    'INSERT INTO customer (`name`, `phone`, `address`, `licencenumber`, `password`) VALUES (?, ?, ?, ?, ?)';
+    "INSERT INTO customer (`name`, `phone`, `address`, `licencenumber`, `password`) VALUES (?, ?, ?, ?, ?)";
   const values = [name, phone, address, licenceNumber, password];
 
   db.query(sql, values, (err, data) => {
     if (err) {
       return res
         .status(500)
-        .json({ error: 'Error inserting data into the database' });
+        .json({ error: "Error inserting data into the database" });
     }
     return res.json({
       success: true,
-      message: 'Customer added successfully',
+      message: "Customer added successfully",
       data,
     });
   });
@@ -104,23 +104,23 @@ app.post('/customer', (req, res) => {
 // Delete Customer
 
 // Delete Customer query
-app.delete('/customer/:id', (req, res) => {
+app.delete("/customer/:id", (req, res) => {
   const id = req.params.id;
 
-  const sql = 'DELETE FROM customer WHERE id = ?';
+  const sql = "DELETE FROM customer WHERE id = ?";
 
   db.query(sql, [id], (err, data) => {
     if (err) {
-      console.log('Error in deleting customer', err);
+      console.log("Error in deleting customer", err);
       return res.json(err);
     }
-    res.json({ message: 'Customer deleted successfully' });
-    console.log('Customer deleted successfully');
+    res.json({ message: "Customer deleted successfully" });
+    console.log("Customer deleted successfully");
   });
 });
 
 // Edit Customer
-app.put('/customer/:id', (req, res) => {
+app.put("/customer/:id", (req, res) => {
   const customerId = req.params.id;
   const updateDetails = req.body;
 
@@ -129,12 +129,12 @@ app.put('/customer/:id', (req, res) => {
   );
 
   if (updateFields.length === 0) {
-    return res.status(400).json({ error: 'No valid fields to update' });
+    return res.status(400).json({ error: "No valid fields to update" });
   }
 
   const sql = `UPDATE customer SET ${updateFields
     .map((field) => `${field} = ?`)
-    .join(', ')} WHERE id = ?`;
+    .join(", ")} WHERE id = ?`;
 
   const values = [
     ...updateFields.map((field) => updateDetails[field]),
@@ -144,12 +144,12 @@ app.put('/customer/:id', (req, res) => {
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     return res.json({
       success: true,
-      message: 'Customer details updated successfully',
+      message: "Customer details updated successfully",
     });
   });
 });
@@ -157,16 +157,16 @@ app.put('/customer/:id', (req, res) => {
 // Employee
 
 // Employee data
-app.get('/employee', (req, res) => {
-  const sql = 'SELECT * FROM employee';
+app.get("/employee", (req, res) => {
+  const sql = "SELECT * FROM employee";
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No employee found' });
+      return res.status(404).json({ error: "No employee found" });
     }
 
     return res.send(result);
@@ -174,52 +174,52 @@ app.get('/employee', (req, res) => {
 });
 
 // Add new Employee
-app.post('/employee', (req, res) => {
+app.post("/employee", (req, res) => {
   const { name, department, salary } = req.body;
 
   if (!name || !department || !salary) {
-    return res.status(400).json({ error: 'Incomplete data' });
+    return res.status(400).json({ error: "Incomplete data" });
   }
 
   const sql =
-    'INSERT INTO employee (name, department, salary) VALUES (?, ?, ?)';
+    "INSERT INTO employee (name, department, salary) VALUES (?, ?, ?)";
   const values = [name, department, salary];
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      console.error('Error executing MySQL query: ' + err.stack);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error executing MySQL query: " + err.stack);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
-    console.log('Employee added successfully');
-    res.status(201).json({ message: 'Employee added successfully' });
+    console.log("Employee added successfully");
+    res.status(201).json({ message: "Employee added successfully" });
   });
 });
 
 // Delete Employee
-app.delete('/employee/:id', (req, res) => {
+app.delete("/employee/:id", (req, res) => {
   const id = req.params.id;
 
-  const sql = 'DELETE FROM employee WHERE id = ?';
+  const sql = "DELETE FROM employee WHERE id = ?";
 
   db.query(sql, [id], (err, result) => {
     if (err) {
-      console.error('Error in deleting employee', err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error in deleting employee", err);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.affectedRows === 0) {
       // No employee found with the given ID
-      return res.status(404).json({ error: 'Employee not found' });
+      return res.status(404).json({ error: "Employee not found" });
     }
 
-    console.log('Employee deleted successfully');
-    res.status(200).json({ message: 'Employee deleted successfully' });
+    console.log("Employee deleted successfully");
+    res.status(200).json({ message: "Employee deleted successfully" });
   });
 });
 
 // Edit Employee
-app.put('/employee/:id', (req, res) => {
+app.put("/employee/:id", (req, res) => {
   const empDetails = req.params.id;
   const updateDetails = req.body;
 
@@ -228,12 +228,12 @@ app.put('/employee/:id', (req, res) => {
   );
 
   if (updateFields.length === 0) {
-    return res.status(400).json({ error: 'No valid fields to update' });
+    return res.status(400).json({ error: "No valid fields to update" });
   }
 
   const sql = `UPDATE employee SET ${updateFields
     .map((field) => `${field} = ?`)
-    .join(', ')} WHERE id = ?`;
+    .join(", ")} WHERE id = ?`;
 
   const values = updateFields.map((field) => updateDetails[field]);
   values.push(empDetails);
@@ -241,28 +241,28 @@ app.put('/employee/:id', (req, res) => {
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     return res.json({
       success: true,
-      message: 'employee details updated successfully',
+      message: "employee details updated successfully",
     });
   });
 });
 
 // Total number of Employees
-app.get('/totalEmployee', (req, res) => {
+app.get("/totalEmployee", (req, res) => {
   const sql = `SELECT COUNT(*) AS emp FROM employee`;
 
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No cart products found' });
+      return res.status(404).json({ error: "No cart products found" });
     }
 
     return res.send(result);
@@ -272,7 +272,7 @@ app.get('/totalEmployee', (req, res) => {
 // TurnOver
 
 // TurnOver query
-app.get('/turnOver', (req, res) => {
+app.get("/turnOver", (req, res) => {
   const sql = `
     SELECT SUM(car.price) AS total
     FROM car
@@ -283,11 +283,11 @@ app.get('/turnOver', (req, res) => {
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No cart products found' });
+      return res.status(404).json({ error: "No cart products found" });
     }
 
     return res.send(result);
@@ -297,7 +297,7 @@ app.get('/turnOver', (req, res) => {
 // Pending Bookings
 
 // Pending Bookings query
-app.get('/pendingBookings', (req, res) => {
+app.get("/pendingBookings", (req, res) => {
   const sql = `
     SELECT COUNT(*) AS pending
     FROM booking
@@ -307,11 +307,11 @@ app.get('/pendingBookings', (req, res) => {
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No cart products found' });
+      return res.status(404).json({ error: "No cart products found" });
     }
 
     return res.send(result);
@@ -321,19 +321,19 @@ app.get('/pendingBookings', (req, res) => {
 // Click Delivered
 
 // Click Delivered query
-app.put('/booking/:id', (req, res) => {
+app.put("/booking/:id", (req, res) => {
   const { id } = req.params;
 
-  const sql = 'UPDATE booking SET status = ? WHERE id = ?';
-  const values = ['delivered', id];
+  const sql = "UPDATE booking SET status = ? WHERE id = ?";
+  const values = ["delivered", id];
 
   db.query(sql, values, (error, result) => {
     if (error) {
-      console.error('Error updating booking status:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      console.error("Error updating booking status:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     } else {
-      console.log('Booking status updated successfully');
-      res.json({ message: 'Booking status updated successfully' });
+      console.log("Booking status updated successfully");
+      res.json({ message: "Booking status updated successfully" });
     }
   });
 });
@@ -341,16 +341,16 @@ app.put('/booking/:id', (req, res) => {
 // Displaying Service
 
 // Displaying Service query
-app.get('/service', (req, res) => {
-  const sql = 'SELECT * FROM services';
+app.get("/service", (req, res) => {
+  const sql = "SELECT * FROM services";
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No employee found' });
+      return res.status(404).json({ error: "No employee found" });
     }
 
     return res.send(result);
@@ -361,23 +361,23 @@ app.get('/service', (req, res) => {
 
 // Adding New Car query
 app.post(
-  '/car',
+  "/car",
   upload.fields([
-    { name: 'carimage', maxCount: 1 },
-    { name: 'sideview', maxCount: 1 },
-    { name: 'interior', maxCount: 1 },
-    { name: 'rearview', maxCount: 1 },
+    { name: "carimage", maxCount: 1 },
+    { name: "sideview", maxCount: 1 },
+    { name: "interior", maxCount: 1 },
+    { name: "rearview", maxCount: 1 },
   ]),
   (req, res) => {
     const requiredFields = [
-      'chassisno',
-      'engineno',
-      'cartype',
-      'modelname',
-      'cardescription',
-      'color',
-      'price',
-      'stock',
+      "chassisno",
+      "engineno",
+      "cartype",
+      "modelname",
+      "cardescription",
+      "color",
+      "price",
+      "stock",
     ];
 
     for (const field of requiredFields) {
@@ -391,11 +391,11 @@ app.post(
     const { carimage, sideview, interior, rearview } = req.files;
 
     if (!carimage || !sideview || !interior || !rearview) {
-      return res.status(400).json({ error: 'Missing one or more image files' });
+      return res.status(400).json({ error: "Missing one or more image files" });
     }
 
     const sql =
-      'INSERT INTO car (`chassisno`, `engineno`, `cartype`, `modelname`,`carimage`, `sideview`, `interior`, `rearview`, `cardescription`,`color`, `price`, `stock`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      "INSERT INTO car (`chassisno`, `engineno`, `cartype`, `modelname`,`carimage`, `sideview`, `interior`, `rearview`, `cardescription`,`color`, `price`, `stock`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const values = [
       req.body.chassisno,
       req.body.engineno,
@@ -413,10 +413,10 @@ app.post(
 
     db.query(sql, values, (err, data) => {
       if (err) {
-        console.error('Error adding car:', err);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error adding car:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
       }
-      return res.json({ success: true, message: 'Car added successfully' });
+      return res.json({ success: true, message: "Car added successfully" });
     });
   }
 );
@@ -424,7 +424,7 @@ app.post(
 // Edit Car Details
 
 // Edit Car Details query
-app.put('/car/:id', (req, res) => {
+app.put("/car/:id", (req, res) => {
   const empDetails = req.params.id;
   const updateDetails = req.body;
 
@@ -433,12 +433,12 @@ app.put('/car/:id', (req, res) => {
   );
 
   if (updateFields.length === 0) {
-    return res.status(400).json({ error: 'No valid fields to update' });
+    return res.status(400).json({ error: "No valid fields to update" });
   }
 
   const sql = `UPDATE car SET ${updateFields
     .map((field) => `${field} = ?`)
-    .join(', ')} WHERE id = ?`;
+    .join(", ")} WHERE id = ?`;
 
   const values = updateFields.map((field) => updateDetails[field]);
   values.push(empDetails);
@@ -446,12 +446,12 @@ app.put('/car/:id', (req, res) => {
   db.query(sql, values, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     return res.json({
       success: true,
-      message: 'car details updated successfully',
+      message: "car details updated successfully",
     });
   });
 });
@@ -459,84 +459,84 @@ app.put('/car/:id', (req, res) => {
 // Delete Car
 
 // Delete Car query
-app.delete('/car/:id', (req, res) => {
+app.delete("/car/:id", (req, res) => {
   const id = req.params.id;
 
-  const sql = 'DELETE FROM car WHERE id = ?';
+  const sql = "DELETE FROM car WHERE id = ?";
 
   db.query(sql, [id], (err, data) => {
     if (err) {
-      console.log('Error in deleting car', err);
+      console.log("Error in deleting car", err);
       return res.json(err);
     }
-    res.json({ message: 'car deleted successfully' });
-    console.log('car deleted successfully');
+    res.json({ message: "car deleted successfully" });
+    console.log("car deleted successfully");
   });
 });
 
 // User
 
 // User signup
-app.post('/usersignup', (req, res) => {
+app.post("/usersignup", (req, res) => {
   const { name, phone, adress, licenceNumber, password } = req.body;
 
   if (!name || !phone || !adress || !licenceNumber || !password) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   const sql =
-    'INSERT INTO customer (`name`, `phone`, `address`, `licencenumber`, `password`) VALUES (?, ?, ?, ?, ?)';
+    "INSERT INTO customer (`name`, `phone`, `address`, `licencenumber`, `password`) VALUES (?, ?, ?, ?, ?)";
   const values = [name, phone, adress, licenceNumber, password];
 
   db.query(sql, values, (err, data) => {
     if (err) {
       return res
         .status(500)
-        .json({ error: 'Error inserting data into the database' });
+        .json({ error: "Error inserting data into the database" });
     }
     return res.json({ success: true, data });
   });
 });
 
 // User login
-app.post('/userlogin', (req, res) => {
+app.post("/userlogin", (req, res) => {
   const { phone, password } = req.body;
 
-  const sql = 'SELECT * FROM customer WHERE phone = ? AND password = ?';
+  const sql = "SELECT * FROM customer WHERE phone = ? AND password = ?";
   const values = [phone, password];
 
   db.query(sql, values, (err, result) => {
     if (err) {
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
-    return res.status(200).json({ message: 'Login successful' });
+    return res.status(200).json({ message: "Login successful" });
   });
 });
 
 // Book a service
 
 // Book a service query
-app.post('/service', (req, res) => {
+app.post("/service", (req, res) => {
   const { regNo, name, phone, serviceType, currentDate } = req.body;
 
   if (!regNo || !name || !phone || !serviceType) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   const sql =
-    'INSERT INTO services (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`) VALUES (?, ?, ?, ?, ?)';
+    "INSERT INTO services (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`) VALUES (?, ?, ?, ?, ?)";
   const values = [regNo, name, phone, serviceType, currentDate];
 
   db.query(sql, values, (err, data) => {
     if (err) {
-      console.error('Database error:', err);
+      console.error("Database error:", err);
       return res
         .status(500)
-        .json({ error: 'Error inserting data into the database' });
+        .json({ error: "Error inserting data into the database" });
     }
     return res.json({ success: true, data });
   });
@@ -545,16 +545,34 @@ app.post('/service', (req, res) => {
 // Common
 
 // Cars details
-app.get('/car', (req, res) => {
-  const sql = 'SELECT * FROM car';
+app.get("/car", (req, res) => {
+  const sql = "SELECT * FROM car";
   db.query(sql, (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No products found' });
+      return res.status(404).json({ error: "No products found" });
+    }
+
+    return res.send(result);
+  });
+});
+
+//get car by id
+app.get("/car/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "SELECT * FROM car WHERE id=?";
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "No products found" });
     }
 
     return res.send(result);

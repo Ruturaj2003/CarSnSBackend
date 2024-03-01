@@ -6,14 +6,14 @@ const path = require('path');
 
 const app = express();
 const port = 8081;
+
 app.use(cors());
 app.use(express.json());
-
 app.use('/images', express.static(path.join(__dirname, '../images')));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, '../images');
+    cb(null, path.join(__dirname, '../images'));
   },
   filename: (req, file, cb) => {
     cb(
@@ -39,19 +39,21 @@ const db = mysql.createConnection({
 
 // Admin login
 app.post('/admin', (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   const sql = 'SELECT * FROM admin WHERE username = ? AND password = ?';
-  const values = [email, password];
+  const values = [username, password];
 
   db.query(sql, values, (err, result) => {
     if (err) {
+      console.error(err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
     if (result.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
     return res.status(200).json({ message: 'Login successful' });
   });
 });
@@ -68,10 +70,10 @@ app.get('/customer', (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No products found' });
+      return res.status(404).json({ error: 'No customers found' });
     }
 
-    return res.send(result);
+    return res.json(result);
   });
 });
 
@@ -89,21 +91,19 @@ app.post('/customer', (req, res) => {
 
   db.query(sql, values, (err, data) => {
     if (err) {
+      console.error(err);
       return res
         .status(500)
         .json({ error: 'Error inserting data into the database' });
     }
-    return res.json({
-      success: true,
-      message: 'Customer added successfully',
-      data,
-    });
+
+    return res
+      .status(201)
+      .json({ success: true, message: 'Customer added successfully', data });
   });
 });
 
 // Delete Customer
-
-// Delete Customer query
 app.delete('/customer/:id', (req, res) => {
   const id = req.params.id;
 
@@ -111,9 +111,10 @@ app.delete('/customer/:id', (req, res) => {
 
   db.query(sql, [id], (err, data) => {
     if (err) {
-      console.log('Error in deleting customer', err);
-      return res.json(err);
+      console.error('Error in deleting customer', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
+
     res.json({ message: 'Customer deleted successfully' });
     console.log('Customer deleted successfully');
   });
@@ -125,7 +126,7 @@ app.put('/customer/:id', (req, res) => {
   const updateDetails = req.body;
 
   const updateFields = Object.keys(updateDetails).filter(
-    (field) => updateDetails[field]
+    (field) => updateDetails[field] !== undefined
   );
 
   if (updateFields.length === 0) {
@@ -224,7 +225,7 @@ app.put('/employee/:id', (req, res) => {
   const updateDetails = req.body;
 
   const updateFields = Object.keys(updateDetails).filter(
-    (field) => updateDetails[field]
+    (field) => updateDetails[field] !== undefined
   );
 
   if (updateFields.length === 0) {
@@ -246,7 +247,7 @@ app.put('/employee/:id', (req, res) => {
 
     return res.json({
       success: true,
-      message: 'employee details updated successfully',
+      message: 'Employee details updated successfully',
     });
   });
 });
@@ -262,7 +263,7 @@ app.get('/totalEmployee', (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No cart products found' });
+      return res.status(404).json({ error: 'No employees found' });
     }
 
     return res.send(result);
@@ -287,7 +288,7 @@ app.get('/turnOver', (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No cart products found' });
+      return res.status(404).json({ error: 'No turnover found' });
     }
 
     return res.send(result);
@@ -311,7 +312,7 @@ app.get('/pendingBookings', (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No cart products found' });
+      return res.status(404).json({ error: 'No pending bookings found' });
     }
 
     return res.send(result);
@@ -350,7 +351,7 @@ app.get('/service', (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No employee found' });
+      return res.status(404).json({ error: 'No services found' });
     }
 
     return res.send(result);
@@ -425,11 +426,11 @@ app.post(
 
 // Edit Car Details query
 app.put('/car/:id', (req, res) => {
-  const empDetails = req.params.id;
+  const carId = req.params.id;
   const updateDetails = req.body;
 
   const updateFields = Object.keys(updateDetails).filter(
-    (field) => updateDetails[field]
+    (field) => updateDetails[field] !== undefined
   );
 
   if (updateFields.length === 0) {
@@ -440,8 +441,7 @@ app.put('/car/:id', (req, res) => {
     .map((field) => `${field} = ?`)
     .join(', ')} WHERE id = ?`;
 
-  const values = updateFields.map((field) => updateDetails[field]);
-  values.push(empDetails);
+  const values = [...updateFields.map((field) => updateDetails[field]), carId];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -451,7 +451,7 @@ app.put('/car/:id', (req, res) => {
 
     return res.json({
       success: true,
-      message: 'car details updated successfully',
+      message: 'Car details updated successfully',
     });
   });
 });
@@ -460,17 +460,18 @@ app.put('/car/:id', (req, res) => {
 
 // Delete Car query
 app.delete('/car/:id', (req, res) => {
-  const id = req.params.id;
+  const carId = req.params.id;
 
   const sql = 'DELETE FROM car WHERE id = ?';
 
-  db.query(sql, [id], (err, data) => {
+  db.query(sql, [carId], (err, data) => {
     if (err) {
-      console.log('Error in deleting car', err);
-      return res.json(err);
+      console.error('Error in deleting car', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
-    res.json({ message: 'car deleted successfully' });
-    console.log('car deleted successfully');
+
+    res.json({ message: 'Car deleted successfully' });
+    console.log('Car deleted successfully');
   });
 });
 
@@ -478,15 +479,15 @@ app.delete('/car/:id', (req, res) => {
 
 // User signup
 app.post('/usersignup', (req, res) => {
-  const { name, phone, adress, licenceNumber, password } = req.body;
+  const { name, phone, address, licenceNumber, password } = req.body;
 
-  if (!name || !phone || !adress || !licenceNumber || !password) {
+  if (!name || !phone || !address || !licenceNumber || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const sql =
     'INSERT INTO customer (`name`, `phone`, `address`, `licencenumber`, `password`) VALUES (?, ?, ?, ?, ?)';
-  const values = [name, phone, adress, licenceNumber, password];
+  const values = [name, phone, address, licenceNumber, password];
 
   db.query(sql, values, (err, data) => {
     if (err) {
@@ -494,6 +495,7 @@ app.post('/usersignup', (req, res) => {
         .status(500)
         .json({ error: 'Error inserting data into the database' });
     }
+
     return res.json({ success: true, data });
   });
 });
@@ -513,6 +515,7 @@ app.post('/userlogin', (req, res) => {
     if (result.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+
     return res.status(200).json({ message: 'Login successful' });
   });
 });
@@ -538,6 +541,7 @@ app.post('/service', (req, res) => {
         .status(500)
         .json({ error: 'Error inserting data into the database' });
     }
+
     return res.json({ success: true, data });
   });
 });
@@ -554,10 +558,10 @@ app.get('/car', (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'No products found' });
+      return res.status(404).json({ error: 'No cars found' });
     }
 
-    return res.send(result);
+    return res.json(result);
   });
 });
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 29, 2024 at 11:14 AM
+-- Generation Time: Mar 01, 2024 at 08:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,16 +73,17 @@ INSERT INTO `booking` (`customername`, `phone`, `bookingamount`, `bookingdate`, 
 --
 
 CREATE TABLE `car` (
+  `modelname` varchar(10) NOT NULL,
+  `type` varchar(10) NOT NULL,
   `chassisno` varchar(18) NOT NULL,
   `engineno` int(12) NOT NULL,
-  `modelname` varchar(10) NOT NULL,
-  `cartype` varchar(10) NOT NULL,
+  `description` varchar(300) NOT NULL,
+  `color` varchar(30) NOT NULL,
+  `price` int(11) NOT NULL,
   `carimage` varchar(50) NOT NULL,
   `sideview` varchar(100) NOT NULL,
   `interior` varchar(100) NOT NULL,
   `rearview` varchar(100) NOT NULL,
-  `cardescription` varchar(300) NOT NULL,
-  `price` int(11) NOT NULL,
   `stock` int(11) NOT NULL,
   `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -91,8 +92,9 @@ CREATE TABLE `car` (
 -- Dumping data for table `car`
 --
 
-INSERT INTO `car` (`chassisno`, `engineno`, `modelname`, `cartype`, `carimage`, `sideview`, `interior`, `rearview`, `cardescription`, `price`, `stock`, `id`) VALUES
-('SB1280', 9185, 'X7', 'SUV', 'Car_image_1708861269778.png', 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 'fsdfhjdsgvfjkhsdvbfkjshfv', 9000000, 9, 5);
+INSERT INTO `car` (`modelname`, `type`, `chassisno`, `engineno`, `description`, `color`, `price`, `carimage`, `sideview`, `interior`, `rearview`, `stock`, `id`) VALUES
+('X7', 'SUV', 'SB1280', 9185, 'fsdfhjdsgvfjkhsdvbfkjshfv', 'Red', 9000000, 'Car_image_1708861269778.png', 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 9, 5),
+('M340i', 'SEDAN', '123456', 654321, 'gg', 'red', 7500000, 'carimage_1709320220825.png', 'sideview_1709320220831.png', 'interior_1709320220834.png', 'rearview_1709320220835.png', 8, 12);
 
 -- --------------------------------------------------------
 
@@ -139,7 +141,8 @@ CREATE TABLE `employee` (
 INSERT INTO `employee` (`name`, `department`, `salary`, `id`) VALUES
 ('Sameer N', 'sales', 80000, 2),
 ('Sameer', 'sales', 50000, 3),
-('Sameer', 'zxcvbnm', 234567, 4);
+('Sameer', 'zxcvbnm', 234567, 4),
+('Aftab', 'Afgani', 12000, 5);
 
 -- --------------------------------------------------------
 
@@ -255,7 +258,7 @@ ALTER TABLE `booking`
 -- AUTO_INCREMENT for table `car`
 --
 ALTER TABLE `car`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `customer`
@@ -267,7 +270,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `employee`
 --
 ALTER TABLE `employee`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `services`

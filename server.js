@@ -431,9 +431,9 @@ app.post(
     const requiredFields = [
       'chassisno',
       'engineno',
-      'cartype',
+      'type',
       'modelname',
-      'cardescription',
+      'description',
       'color',
       'price',
       'stock',
@@ -454,17 +454,17 @@ app.post(
     }
 
     const sql =
-      'INSERT INTO car (`chassisno`, `engineno`, `cartype`, `modelname`,`carimage`, `sideview`, `interior`, `rearview`, `cardescription`,`color`, `price`, `stock`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      'INSERT INTO car (`chassisno`, `engineno`, `type`, `modelname`,`carimage`, `sideview`, `interior`, `rearview`, `description`,`color`, `price`, `stock`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const values = [
       req.body.chassisno,
       req.body.engineno,
-      req.body.cartype,
+      req.body.type,
       req.body.modelname,
       carimage[0].filename,
       sideview[0].filename,
       interior[0].filename,
       rearview[0].filename,
-      req.body.cardescription,
+      req.body.description,
       req.body.color,
       req.body.price,
       req.body.stock,
@@ -473,6 +473,7 @@ app.post(
     db.query(sql, values, (err, data) => {
       if (err) {
         console.error('Error adding car:', err);
+        console.log(err);
         return res.status(500).json({ error: 'Internal Server Error' });
       }
       return res.json({ success: true, message: 'Car added successfully' });

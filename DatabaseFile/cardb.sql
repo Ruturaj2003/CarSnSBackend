@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 28, 2024 at 07:13 AM
+-- Generation Time: Feb 29, 2024 at 11:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,24 +47,24 @@ INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 --
 
 CREATE TABLE `booking` (
-  `id` int(11) NOT NULL,
-  `carid` int(11) NOT NULL,
   `customername` varchar(50) NOT NULL,
   `phone` varchar(10) NOT NULL,
   `bookingamount` int(11) NOT NULL,
   `bookingdate` date NOT NULL,
   `deliverydate` date NOT NULL,
   `employeeid` int(11) NOT NULL,
-  `status` varchar(10) NOT NULL
+  `status` varchar(10) NOT NULL,
+  `id` int(11) NOT NULL,
+  `carid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `booking`
 --
 
-INSERT INTO `booking` (`id`, `carid`, `customername`, `phone`, `bookingamount`, `bookingdate`, `deliverydate`, `employeeid`, `status`) VALUES
-(1, 1, 'Wazid', '9113545025', 1000000, '2024-02-08', '2024-02-27', 1, 'delivered'),
-(2, 2, 'Siddarath', '9740990085', 8500000, '2024-02-05', '2024-02-14', 1, 'delivered');
+INSERT INTO `booking` (`customername`, `phone`, `bookingamount`, `bookingdate`, `deliverydate`, `employeeid`, `status`, `id`, `carid`) VALUES
+('Wazid', '9113545025', 1000000, '2024-02-08', '2024-02-27', 1, 'delivered', 1, 1),
+('Siddarath', '9740990085', 8500000, '2024-02-05', '2024-02-14', 1, 'delivered', 2, 2);
 
 -- --------------------------------------------------------
 
@@ -73,27 +73,26 @@ INSERT INTO `booking` (`id`, `carid`, `customername`, `phone`, `bookingamount`, 
 --
 
 CREATE TABLE `car` (
-  `id` int(11) NOT NULL,
   `chassisno` varchar(18) NOT NULL,
   `engineno` int(12) NOT NULL,
-  `cartype` varchar(10) NOT NULL,
   `modelname` varchar(10) NOT NULL,
+  `cartype` varchar(10) NOT NULL,
   `carimage` varchar(50) NOT NULL,
   `sideview` varchar(100) NOT NULL,
   `interior` varchar(100) NOT NULL,
   `rearview` varchar(100) NOT NULL,
   `cardescription` varchar(300) NOT NULL,
-  `color` varchar(10) NOT NULL,
   `price` int(11) NOT NULL,
-  `stock` int(11) NOT NULL
+  `stock` int(11) NOT NULL,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `car`
 --
 
-INSERT INTO `car` (`id`, `chassisno`, `engineno`, `cartype`, `modelname`, `carimage`, `sideview`, `interior`, `rearview`, `cardescription`, `color`, `price`, `stock`) VALUES
-(5, 'SB1280', 9185, 'SUV', 'X7', 'Car_image_1708861269778.png', 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 'fsdfhjdsgvfjkhsdvbfkjshfv', 'Red', 9000000, 9);
+INSERT INTO `car` (`chassisno`, `engineno`, `modelname`, `cartype`, `carimage`, `sideview`, `interior`, `rearview`, `cardescription`, `price`, `stock`, `id`) VALUES
+('SB1280', 9185, 'X7', 'SUV', 'Car_image_1708861269778.png', 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 'fsdfhjdsgvfjkhsdvbfkjshfv', 9000000, 9, 5);
 
 -- --------------------------------------------------------
 
@@ -102,23 +101,23 @@ INSERT INTO `car` (`id`, `chassisno`, `engineno`, `cartype`, `modelname`, `carim
 --
 
 CREATE TABLE `customer` (
-  `id` int(11) NOT NULL,
   `name` varchar(30) NOT NULL,
   `phone` varchar(10) NOT NULL,
   `address` varchar(50) NOT NULL,
   `licencenumber` varchar(15) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `password` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customer`
 --
 
-INSERT INTO `customer` (`id`, `name`, `phone`, `address`, `licencenumber`, `password`) VALUES
-(4, 'Siddarath', '9740990085', 'xhagcxhacjasahc', 'ka22 2022', '123456789'),
-(9, 'Sameer Nadaf', '8310087784', 'Belagavi', '2545616', '123456789'),
-(10, 'HeartRate', '9740346544', 'sdfysdgfsf', 'sdsgsdg', '12345678'),
-(11, 'SAMEER NADAF', '9740346544', 'fsfsd', 'sfsfsf', '754542424');
+INSERT INTO `customer` (`name`, `phone`, `address`, `licencenumber`, `password`, `id`) VALUES
+('Siddarath', '9740990085', 'xhagcxhacjasahc', 'ka22 2022', '123456789', 4),
+('Sameer Nadaf', '8310087784', 'Belagavi', '2545616', '123456789', 9),
+('HeartRate', '9740346544', 'sdfysdgfsf', 'sdsgsdg', '12345678', 10),
+('SAMEER NADAF', '9740346544', 'fsfsd', 'sfsfsf', '754542424', 11);
 
 -- --------------------------------------------------------
 
@@ -127,19 +126,20 @@ INSERT INTO `customer` (`id`, `name`, `phone`, `address`, `licencenumber`, `pass
 --
 
 CREATE TABLE `employee` (
-  `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `department` varchar(50) NOT NULL,
-  `salary` int(11) NOT NULL
+  `salary` int(11) NOT NULL,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employee`
 --
 
-INSERT INTO `employee` (`id`, `name`, `department`, `salary`) VALUES
-(2, 'Sameer N', 'sales', 80000),
-(3, 'Sameer', 'sales', 50000);
+INSERT INTO `employee` (`name`, `department`, `salary`, `id`) VALUES
+('Sameer N', 'sales', 80000, 2),
+('Sameer', 'sales', 50000, 3),
+('Sameer', 'zxcvbnm', 234567, 4);
 
 -- --------------------------------------------------------
 
@@ -148,7 +148,6 @@ INSERT INTO `employee` (`id`, `name`, `department`, `salary`) VALUES
 --
 
 CREATE TABLE `services` (
-  `id` int(11) NOT NULL,
   `registrationnumber` varchar(16) NOT NULL,
   `customername` varchar(30) NOT NULL,
   `phone` varchar(10) NOT NULL,
@@ -156,17 +155,18 @@ CREATE TABLE `services` (
   `arrivaldate` date NOT NULL,
   `deliverydate` date NOT NULL,
   `servicedescription` varchar(50) NOT NULL,
-  `cost` int(11) NOT NULL
+  `cost` int(11) NOT NULL,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `services`
 --
 
-INSERT INTO `services` (`id`, `registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`, `deliverydate`, `servicedescription`, `cost`) VALUES
-(1, 'ka 22 hd 7816', 'Wazid', '9113545025', 'General', '2024-02-28', '2024-02-29', 'cghsadjasdhasvckahscvkjacbkjac', 20000),
-(2, 'ka 21 hp 3210', 'Siddarath', '9740990085', 'general', '2024-02-29', '2024-02-29', 'fxdfasfdasvahsvkasvf', 30000),
-(3, 'ABC123', 'John Doe', '1234567890', 'Regular', '2024-02-25', '2024-03-05', 'Routine', 150);
+INSERT INTO `services` (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`, `deliverydate`, `servicedescription`, `cost`, `id`) VALUES
+('ka 22 hd 7816', 'Wazid', '9113545025', 'General', '2024-02-28', '2024-02-29', 'cghsadjasdhasvckahscvkjacbkjac', 20000, 1),
+('ka 21 hp 3210', 'Siddarath', '9740990085', 'general', '2024-02-29', '2024-02-29', 'fxdfasfdasvahsvkasvf', 30000, 2),
+('ABC123', 'John Doe', '1234567890', 'Regular', '2024-02-25', '2024-03-05', 'Routine', 150, 3);
 
 -- --------------------------------------------------------
 
@@ -267,7 +267,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `employee`
 --
 ALTER TABLE `employee`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `services`

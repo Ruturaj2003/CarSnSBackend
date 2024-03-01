@@ -358,6 +358,45 @@ app.get('/service', (req, res) => {
   });
 });
 
+app.get('/totalService', (req, res) => {
+  const sql = `SELECT COUNT(*) AS serviceCount FROM services`;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'No services found' });
+    }
+
+    return res.send(result);
+  });
+});
+
+//Onclick of serviced button
+app.put('/service/:id', (req, res) => {
+  const { id } = req.params;
+  const { date, desc, cost } = req.body;
+
+  const sql = 'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ? WHERE id = ?';
+  const values = [date, desc, cost, id];
+
+  db.query(sql, values, (error, result) => {
+    if (error) {
+      console.error('Error updating service status:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      console.log('service status updated successfully');
+      res.json({ message: 'service status updated successfully' });
+    }
+  });
+});
+
+
+//Car
+
 // Cars details
 app.get('/car', (req, res) => {
   const sql = 'SELECT * FROM car';
@@ -441,8 +480,6 @@ app.post(
   }
 );
 
-// Edit Car Details
-
 // Edit Car Details query
 app.put('/car/:id', (req, res) => {
   const carId = req.params.id;
@@ -474,8 +511,6 @@ app.put('/car/:id', (req, res) => {
     });
   });
 });
-
-// Delete Car
 
 // Delete Car query
 app.delete('/car/:id', (req, res) => {
@@ -583,5 +618,86 @@ app.post('/service', (req, res) => {
     return res.json({ success: true, data });
   });
 });
+
+
+//Booking
+
+// Book a car query
+app.post('/booking', (req, res) => {
+  const { id, name, phone, amount, currentDate } = req.body;
+
+  if (!regNo || !name || !phone || !amount) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  const sql =
+    'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
+  const values = [id, name, phone, amount, currentDate];
+
+  db.query(sql, values, (err, data) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res
+        .status(500)
+        .json({ error: 'Error inserting data into the database' });
+    }
+
+    return res.json({ success: true, data });
+  });
+});
+
+//Get all bookings
+app.get('/booking', (req, res) => {
+  const sql = 'SELECT * FROM booking';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'No bookings found' });
+    }
+
+    return res.json(result);
+  });
+});
+
+//Onclick of delivered button
+app.put('/booking/:id', (req, res) => {
+  const { id } = req.params;
+  const { date, status, emp } = req.body;
+
+  const sql = 'UPDATE booking SET deliverydate = ?, status = ?, employeeid = ? WHERE id = ?';
+  const values = [date, status, emp, id];
+
+  db.query(sql, values, (error, result) => {
+    if (error) {
+      console.error('Error updating booking status:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      console.log('booking status updated successfully');
+      res.json({ message: 'booking status updated successfully' });
+    }
+  });
+});
+
+//Cars stockfile
+app.get('/carstock', (req, res) => {
+  const sql = 'SELECT modelname, cartype, color, stock FROM car';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'No cars found' });
+    }
+
+    return res.json(result);
+  });
+});
+
 
 // Common

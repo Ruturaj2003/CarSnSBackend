@@ -225,7 +225,7 @@ app.put('/employee/:id', (req, res) => {
   const updateDetails = req.body;
 
   const updateFields = Object.keys(updateDetails).filter(
-    (field) => updateDetails[field] !== undefined
+    (field) => updateDetails[field]
   );
 
   if (updateFields.length === 0) {

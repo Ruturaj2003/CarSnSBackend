@@ -625,15 +625,15 @@ app.post('/service', (req, res) => {
 
 // Book a car query
 app.post('/booking', (req, res) => {
-  const { id, name, phone, amount, currentDate } = req.body;
+  const { carid, customername, phone, bookingamount, bookingdate } = req.body;
 
-  if (!regNo || !name || !phone || !amount) {
+  if (!customername || !phone || !bookingamount) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const sql =
     'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
-  const values = [id, name, phone, amount, currentDate];
+  const values = [carid, customername, phone, bookingamount, bookingdate];
 
   db.query(sql, values, (err, data) => {
     if (err) {

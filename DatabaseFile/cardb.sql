@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 01, 2024 at 08:13 PM
+-- Generation Time: Mar 02, 2024 at 10:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -75,16 +75,16 @@ INSERT INTO `booking` (`customername`, `phone`, `bookingamount`, `bookingdate`, 
 CREATE TABLE `car` (
   `modelname` varchar(10) NOT NULL,
   `type` varchar(10) NOT NULL,
+  `carimage` varchar(50) NOT NULL,
+  `price` int(11) NOT NULL,
+  `color` varchar(10) NOT NULL,
+  `stock` int(11) NOT NULL,
+  `description` varchar(300) NOT NULL,
   `chassisno` varchar(18) NOT NULL,
   `engineno` int(12) NOT NULL,
-  `description` varchar(300) NOT NULL,
-  `color` varchar(30) NOT NULL,
-  `price` int(11) NOT NULL,
-  `carimage` varchar(50) NOT NULL,
   `sideview` varchar(100) NOT NULL,
   `interior` varchar(100) NOT NULL,
   `rearview` varchar(100) NOT NULL,
-  `stock` int(11) NOT NULL,
   `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -92,9 +92,9 @@ CREATE TABLE `car` (
 -- Dumping data for table `car`
 --
 
-INSERT INTO `car` (`modelname`, `type`, `chassisno`, `engineno`, `description`, `color`, `price`, `carimage`, `sideview`, `interior`, `rearview`, `stock`, `id`) VALUES
-('X7', 'SUV', 'SB1280', 9185, 'fsdfhjdsgvfjkhsdvbfkjshfv', 'Red', 9000000, 'Car_image_1708861269778.png', 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 9, 5),
-('M340i', 'SEDAN', '123456', 654321, 'gg', 'red', 7500000, 'carimage_1709320220825.png', 'sideview_1709320220831.png', 'interior_1709320220834.png', 'rearview_1709320220835.png', 8, 12);
+INSERT INTO `car` (`modelname`, `type`, `carimage`, `price`, `color`, `stock`, `description`, `chassisno`, `engineno`, `sideview`, `interior`, `rearview`, `id`) VALUES
+('X7', 'SUV', 'Car_image_1708861269778.png', 9000000, 'Red', 9, 'fsdfhjdsgvfjkhsdvbfkjshfv', 'SB1280', 9185, 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 5),
+('M340i', 'Sedan', 'carimage_1709372836739.png', 7500000, 'Black', 8, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac justo eu neque cursus ullamcorper. Nulla facilisi. Mauris efficitur augue eget diam accumsan, ', '123456', 654321, 'sideview_1709372836746.png', 'interior_1709372836752.png', 'rearview_1709372836761.png', 6);
 
 -- --------------------------------------------------------
 
@@ -156,9 +156,9 @@ CREATE TABLE `services` (
   `phone` varchar(10) NOT NULL,
   `servicetype` varchar(50) NOT NULL,
   `arrivaldate` date NOT NULL,
-  `deliverydate` date NOT NULL,
   `servicedescription` varchar(50) NOT NULL,
   `cost` int(11) NOT NULL,
+  `deliverydate` date NOT NULL,
   `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -166,10 +166,10 @@ CREATE TABLE `services` (
 -- Dumping data for table `services`
 --
 
-INSERT INTO `services` (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`, `deliverydate`, `servicedescription`, `cost`, `id`) VALUES
-('ka 22 hd 7816', 'Wazid', '9113545025', 'General', '2024-02-28', '2024-02-29', 'cghsadjasdhasvckahscvkjacbkjac', 20000, 1),
-('ka 21 hp 3210', 'Siddarath', '9740990085', 'general', '2024-02-29', '2024-02-29', 'fxdfasfdasvahsvkasvf', 30000, 2),
-('ABC123', 'John Doe', '1234567890', 'Regular', '2024-02-25', '2024-03-05', 'Routine', 150, 3);
+INSERT INTO `services` (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`, `servicedescription`, `cost`, `deliverydate`, `id`) VALUES
+('ka 22 hd 7816', 'Wazid', '9113545025', 'General', '2024-02-28', 'cghsadjasdhasvckahscvkjacbkjac', 20000, '2024-02-29', 1),
+('ka 21 hp 3210', 'Siddarath', '9740990085', 'general', '2024-02-29', 'fxdfasfdasvahsvkasvf', 30000, '2024-02-29', 2),
+('ABC123', 'John Doe', '1234567890', 'Regular', '2024-02-25', 'Routine', 150, '2024-03-05', 3);
 
 -- --------------------------------------------------------
 
@@ -258,7 +258,7 @@ ALTER TABLE `booking`
 -- AUTO_INCREMENT for table `car`
 --
 ALTER TABLE `car`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `customer`

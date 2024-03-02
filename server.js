@@ -380,7 +380,8 @@ app.put('/service/:id', (req, res) => {
   const { id } = req.params;
   const { date, desc, cost } = req.body;
 
-  const sql = 'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ? WHERE id = ?';
+  const sql =
+    'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ? WHERE id = ?';
   const values = [date, desc, cost, id];
 
   db.query(sql, values, (error, result) => {
@@ -393,7 +394,6 @@ app.put('/service/:id', (req, res) => {
     }
   });
 });
-
 
 //Car
 
@@ -620,32 +620,31 @@ app.post('/service', (req, res) => {
   });
 });
 
-
 //Booking
 
 // Book a car query
-app.post('/booking', (req, res) => {
-  const { carid, customername, phone, bookingamount, bookingdate } = req.body;
+// app.post('/booking', (req, res) => {
+//   const { carid, customername, phone, bookingamount, bookingdate } = req.body;
 
-  if (!customername || !phone || !bookingamount) {
-    return res.status(400).json({ error: 'All fields are required' });
-  }
+//   if (!customername || !phone || !bookingamount) {
+//     return res.status(400).json({ error: 'All fields are required' });
+//   }
 
-  const sql =
-    'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
-  const values = [carid, customername, phone, bookingamount, bookingdate];
+//   const sql =
+//     'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
+//   const values = [carid, customername, phone, bookingamount, bookingdate];
 
-  db.query(sql, values, (err, data) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res
-        .status(500)
-        .json({ error: 'Error inserting data into the database' });
-    }
+//   db.query(sql, values, (err, data) => {
+//     if (err) {
+//       console.error('Database error:', err);
+//       return res
+//         .status(500)
+//         .json({ error: 'Error inserting data into the database' });
+//     }
 
-    return res.json({ success: true, data });
-  });
-});
+//     return res.json({ success: true, data });
+//   });
+// });
 
 //Get all bookings
 app.get('/booking', (req, res) => {
@@ -669,7 +668,8 @@ app.put('/booking/:id', (req, res) => {
   const { id } = req.params;
   const { date, status, emp } = req.body;
 
-  const sql = 'UPDATE booking SET deliverydate = ?, status = ?, employeeid = ? WHERE id = ?';
+  const sql =
+    'UPDATE booking SET deliverydate = ?, status = ?, employeeid = ? WHERE id = ?';
   const values = [date, status, emp, id];
 
   db.query(sql, values, (error, result) => {
@@ -700,5 +700,31 @@ app.get('/carstock', (req, res) => {
   });
 });
 
-
 // Common
+const formUpload = multer({ dest: 'uploads/' }); // Change 'uploads/' to your desired upload directory
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/booking', formUpload.none(), (req, res) => {
+  const { carid, customername, phone, bookingamount, bookingdate } = req.body;
+
+  if (!customername || !phone || !bookingamount) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+
+  const sql =
+    'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
+  const values = [carid, customername, phone, bookingamount, bookingdate];
+
+  db.query(sql, values, (err, data) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res
+        .status(500)
+        .json({ error: 'Error inserting data into the database' });
+    }
+
+    return res.json({ success: true, data });
+  });
+});

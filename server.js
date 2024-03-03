@@ -385,8 +385,8 @@ app.put('/service/:id', (req, res) => {
   const { date, desc, cost } = req.body;
 
   const sql =
-    'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ?, satatus = ? WHERE id = ?';
-  const values = [date, desc, cost, 'true', id];
+    'UPDATE services SET deliverydate = CURRENT_DATE(), servicedescription = ?, cost = ?, status = ? WHERE id = ?';
+  const values = [desc, cost, 'true', id];
 
   db.query(sql, values, (error, result) => {
     if (error) {

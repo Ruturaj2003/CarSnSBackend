@@ -343,24 +343,6 @@ app.get('/trueServices', (req, res) => {
 
 // Click Delivered
 
-// Click Delivered query
-app.put('/booking/:id', (req, res) => {
-  const { id } = req.params;
-
-  const sql = 'UPDATE booking SET status = ? WHERE id = ?';
-  const values = ['delivered', id];
-
-  db.query(sql, values, (error, result) => {
-    if (error) {
-      console.error('Error updating booking status:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    } else {
-      console.log('Booking status updated successfully');
-      res.json({ message: 'Booking status updated successfully' });
-    }
-  });
-});
-
 // Displaying Service
 
 // Displaying Service query

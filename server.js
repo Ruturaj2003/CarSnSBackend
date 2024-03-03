@@ -319,6 +319,29 @@ app.get('/pendingBookings', (req, res) => {
   });
 });
 
+// service count
+app.get('/trueServices', (req, res) => {
+  const sql = `
+    SELECT COUNT(*) AS service
+    FROM services
+    WHERE status = 'true'
+    `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'No service found' });
+    }
+
+    return res.send(result);
+  });
+});
+
+
 // Click Delivered
 
 // Click Delivered query
@@ -380,8 +403,8 @@ app.put('/service/:id', (req, res) => {
   const { id } = req.params;
   const { date, desc, cost } = req.body;
 
-  const sql = 'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ? WHERE id = ?';
-  const values = [date, desc, cost, id];
+  const sql = 'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ?, satatus = ? WHERE id = ?';
+  const values = [date, desc, cost, 'true', id];
 
   db.query(sql, values, (error, result) => {
     if (error) {
@@ -487,7 +510,7 @@ app.put('/car/:id', (req, res) => {
   const updateDetails = req.body;
 
   const updateFields = Object.keys(updateDetails).filter(
-    (field) => updateDetails[field] !== undefined
+    (field) => updateDetails[field]
   );
 
   if (updateFields.length === 0) {
@@ -598,15 +621,15 @@ app.post('/userlogin', (req, res) => {
 
 // Book a service query
 app.post('/service', (req, res) => {
-  const { regNo, name, phone, serviceType, currentDate } = req.body;
+  const { regNo, name, phone, serviceType, currentDate} = req.body;
 
   if (!regNo || !name || !phone || !serviceType) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const sql =
-    'INSERT INTO services (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`) VALUES (?, ?, ?, ?, ?)';
-  const values = [regNo, name, phone, serviceType, currentDate];
+    'INSERT INTO services (`registrationnumber`, `customername`, `phone`, `servicetype`, `arrivaldate`, `status`) VALUES (?, ?, ?, ?, ?, ?)';
+  const values = [regNo, name, phone, serviceType, currentDate, 'false'];
 
   db.query(sql, values, (err, data) => {
     if (err) {
@@ -625,15 +648,15 @@ app.post('/service', (req, res) => {
 
 // Book a car query
 app.post('/booking', (req, res) => {
-  const { id, name, phone, amount, currentDate } = req.body;
+  const { carid, customername, phone, bookingamount, bookingdate } = req.body;
 
-  if (!regNo || !name || !phone || !amount) {
+  if (!customername || !phone || !bookingamount) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   const sql =
     'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
-  const values = [id, name, phone, amount, currentDate];
+  const values = [carid, customername, phone, bookingamount, bookingdate];
 
   db.query(sql, values, (err, data) => {
     if (err) {

@@ -341,7 +341,6 @@ app.get('/trueServices', (req, res) => {
   });
 });
 
-
 // Click Delivered
 
 // Click Delivered query
@@ -403,7 +402,8 @@ app.put('/service/:id', (req, res) => {
   const { id } = req.params;
   const { date, desc, cost } = req.body;
 
-  const sql = 'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ?, satatus = ? WHERE id = ?';
+  const sql =
+    'UPDATE services SET deliverydate = ?, servicedescription = ?, cost = ?, satatus = ? WHERE id = ?';
   const values = [date, desc, cost, 'true', id];
 
   db.query(sql, values, (error, result) => {
@@ -416,7 +416,6 @@ app.put('/service/:id', (req, res) => {
     }
   });
 });
-
 
 //Car
 
@@ -621,7 +620,7 @@ app.post('/userlogin', (req, res) => {
 
 // Book a service query
 app.post('/service', (req, res) => {
-  const { regNo, name, phone, serviceType, currentDate} = req.body;
+  const { regNo, name, phone, serviceType, currentDate } = req.body;
 
   if (!regNo || !name || !phone || !serviceType) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -642,7 +641,6 @@ app.post('/service', (req, res) => {
     return res.json({ success: true, data });
   });
 });
-
 
 //Booking
 
@@ -687,13 +685,13 @@ app.get('/booking', (req, res) => {
   });
 });
 
-//Onclick of delivered button
-app.put('/booking/:id', (req, res) => {
+app.patch('/booking/:id', (req, res) => {
   const { id } = req.params;
   const { deliverydate, status, employeeid } = req.body;
 
-  const sql = 'UPDATE booking SET deliverydate = ?, status = ?, employeeid = ? WHERE id = ?';
-  const values = [deliverydate, status, employeeid, id];
+  const sql =
+    'UPDATE booking SET deliverydate = ?, status = ?, employeeid = ? WHERE id = ?';
+  const values = [deliverydate, 'delivered', employeeid, id];
 
   db.query(sql, values, (error, result) => {
     if (error) {
@@ -705,7 +703,6 @@ app.put('/booking/:id', (req, res) => {
     }
   });
 });
-
 //Cars stockfile
 app.get('/carstock', (req, res) => {
   const sql = 'SELECT modelname, cartype, color, stock FROM car';
@@ -722,6 +719,5 @@ app.get('/carstock', (req, res) => {
     return res.json(result);
   });
 });
-
 
 // Common

@@ -690,10 +690,10 @@ app.get('/booking', (req, res) => {
 //Onclick of delivered button
 app.put('/booking/:id', (req, res) => {
   const { id } = req.params;
-  const { date, status, emp } = req.body;
+  const { deliverydate, status, employeeid } = req.body;
 
   const sql = 'UPDATE booking SET deliverydate = ?, status = ?, employeeid = ? WHERE id = ?';
-  const values = [date, status, emp, id];
+  const values = [deliverydate, status, employeeid, id];
 
   db.query(sql, values, (error, result) => {
     if (error) {

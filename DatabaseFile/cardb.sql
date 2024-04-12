@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2024 at 07:57 AM
+-- Generation Time: Mar 04, 2024 at 09:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cardb`
+-- Database: `merc`
 --
 
 -- --------------------------------------------------------
@@ -101,7 +101,13 @@ CREATE TABLE `car` (
 --
 
 INSERT INTO `car` (`modelname`, `type`, `carimage`, `price`, `color`, `stock`, `description`, `chassisno`, `engineno`, `sideview`, `interior`, `rearview`, `id`) VALUES
-('X7', 'SUV', 'Car_image_1708861269778.png', 9000000, 'red', 9, 'Nothing special', 'SB1280', 9185, 'sideView_1708861269780.png', 'interior_1708861269785.png', 'rearView_1708861269790.png', 5);
+('GLA', 'SUV', 'carimage_1709536969132.png', 6000000, 'Alphine White', 20, 'Compact', '1000', 2000, 'sideview_1709536969133.jpg', 'interior_1709536969139.jpg', 'rearview_1709536969142.jpg', 6),
+('GLC', 'SUV', 'carimage_1709537069588.png', 9000000, 'Mineral White Metallic', 10, 'Midsize', '1001', 2001, 'sideview_1709537069589.jpg', 'interior_1709537069594.jpg', 'rearview_1709537069597.jpg', 7),
+('GLE', 'SUV', 'carimage_1709537188950.png', 10000000, ' Sao Paulo Yellow Metallic', 22, 'Huge', '1002', 2002, 'sideview_1709537188951.jpg', 'interior_1709537188955.jpg', 'rearview_1709537188964.jpg', 8),
+('GLS', 'SUV', 'carimage_1709537292850.png', 12000000, 'Alphine White', 30, 'Extra Huge', '1003', 2003, 'sideview_1709537292851.jpg', 'interior_1709537292856.jpg', 'rearview_1709537292859.jpg', 9),
+('C Class', 'SEDAN', 'carimage_1709537389136.png', 7000000, 'Phytonic Blue', 10, 'Elegant', '1004', 2004, 'sideview_1709537389136.jpg', 'interior_1709537389138.jpg', 'rearview_1709537389141.jpg', 10),
+('E class', 'SEDAN', 'carimage_1709537492313.png', 8000000, 'Dravit Grey Metallic', 20, 'Most Selling', '1005', 2005, 'sideview_1709537492313.jpg', 'interior_1709537492316.jpg', 'rearview_1709537492318.jpg', 11),
+('S class', 'SEDAN', 'carimage_1709537592747.png', 13000000, 'Mineral White Metallic', 20, 'Luxury', '1006', 2006, 'sideview_1709537592749.jpg', 'interior_1709537592752.jpg', 'rearview_1709537592760.jpg', 12);
 
 -- --------------------------------------------------------
 
@@ -126,7 +132,9 @@ INSERT INTO `customer` (`name`, `phone`, `address`, `licencenumber`, `password`,
 ('Siddarath', '9740990085', 'Hanuman Nagar', 'ka22 2022', '123456789', 4),
 ('Sameer Nadaf', '8310087784', 'Belagavi', 'KA22202897', '123456789', 9),
 ('Akash', '8796324512', 'Belagavi', 'KA22202526', '123456', 12),
-('Hritik', '9632215478', 'Belagavi', 'KA22202589', '123456', 13);
+('Hritik', '9632215478', 'Belagavi', 'KA22202589', '123456', 13),
+('Ray', '884476001', 'London', 'ka22EP007', 'loda', 15),
+('Ray3333', '33', 'dsf', 'd32', 'bigDick', 16);
 
 -- --------------------------------------------------------
 
@@ -286,13 +294,13 @@ ALTER TABLE `booking`
 -- AUTO_INCREMENT for table `car`
 --
 ALTER TABLE `car`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `employee`

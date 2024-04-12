@@ -32,7 +32,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'cardb',
+  database: 'merc',
 });
 
 // Admin
@@ -628,15 +628,24 @@ app.post('/service', (req, res) => {
 
 // Book a car query
 app.post('/booking', (req, res) => {
-  const { carid, customername, phone, bookingamount, bookingdate } = req.body;
+  const { carid, customername, phone, bookingamount, bookingdate, emp } =
+    req.body;
 
   if (!customername || !phone || !bookingamount) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.status(403).json({ error: 'All fields are required' });
   }
 
   const sql =
-    'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`) VALUES (?, ?, ?, ?, ?)';
-  const values = [carid, customername, phone, bookingamount, bookingdate];
+    'INSERT INTO booking (`carid`, `customername`, `phone`, `bookingamount`, `bookingdate`,`status`,`employeeid`) VALUES (?, ?, ?, ?, ?,?,?)';
+  const values = [
+    carid,
+    customername,
+    phone,
+    bookingamount,
+    bookingdate,
+    'pending',
+    emp,
+  ];
 
   db.query(sql, values, (err, data) => {
     if (err) {
@@ -646,7 +655,7 @@ app.post('/booking', (req, res) => {
         .json({ error: 'Error inserting data into the database' });
     }
 
-    return res.json({ success: true, data });
+    return res.status(200).json({ success: true, data });
   });
 });
 

@@ -5,7 +5,15 @@ const multer = require('multer');
 const path = require('path');
 
 const app = express();
-const port = 8081;
+const port = 3306;
+
+const db = mysql.createConnection({
+  connectionLimit: 20,
+  socketPath: '/var/lib/mysql/mysql.sock',
+  user: 'id22018704_ruturaj',
+  password: '#Rayofhope1',
+  database: 'id22018704_benz',
+});
 
 app.use(cors());
 app.use(express.json());
@@ -25,14 +33,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-});
-
-const db = mysql.createConnection({
-  connectionLimit: 20,
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'merc',
 });
 
 // Admin
@@ -712,3 +712,4 @@ app.get('/carstock', (req, res) => {
 });
 
 // Common
+// connection.end();
